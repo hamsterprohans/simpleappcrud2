@@ -26,7 +26,8 @@ const AddProduct = () => {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to add product");
+        const err = await res.json();
+        throw new Error(err.message || "Failed to add product");
       }
 
       const { message } = await res.json();

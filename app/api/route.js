@@ -3,17 +3,30 @@ import Products from "@/app/models/products";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  await connectMongoDB();
-  const products = await Products.find();
-  return NextResponse.json({ products }, { status: 200 });
+  try {
+    await connectMongoDB();
+    const products = await Products.find();
+    return NextResponse.json({ products }, { status: 200 });
+  } catch (error) {
+    console.error("GET /api error:", error);
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
 }
 
 export async function POST(request) {
-  const { title, description, price } = await request.json();
-  await connectMongoDB();
-  await Products.create({ title, description, price });
-  return NextResponse.json(
-    { message: "Product created successfully" },
-    { status: 200 }
-  );
+  try {
+    const { title, description, price } = await request.json();
+    await connectMongoDB();
+    await Products.create({ title, description, price });
+    return NextResponse.json(
+      { message: "Product created successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("POST /api error:", error);
+    return NextResponse.json(
+      { message: error.message },
+      { status: 500 }
+    );
+  }
 }
